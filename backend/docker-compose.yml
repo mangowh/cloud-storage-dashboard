@@ -11,6 +11,8 @@ services:
       - S3_SECRET_ACCESS_KEY=NINJA_SECRET_KEY
       - S3_BUCKET_NAME=bonusx-bucket
       - PORT=80
+    ports:
+      - '8080:80'
     depends_on:
       - postgres
       - s3ninja
@@ -37,6 +39,8 @@ services:
     image: scireum/s3-ninja:latest
     expose:
       - '9000'
+    ports:
+      - '9000:9000'
     volumes:
       - ./docker/storage_data:/home/sirius/data
     networks:
