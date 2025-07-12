@@ -1,13 +1,18 @@
+import { User } from '@/decorators/user.decorator';
 import { LoginResponseDto, SignInDto } from '@/dtos/auth.dto';
+import { ProfileDto } from '@/dtos/users.dto';
+import { AuthGuard, JwtPayload } from '@/guards/auth.guard';
 import { AuthService } from '@/services/auth/auth.service';
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   InternalServerErrorException,
   Post,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
@@ -48,5 +53,16 @@ export class AuthController {
       console.error('Login error:', error);
       throw new InternalServerErrorException('Authentication failed');
     }
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('profile')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User is logged in and profile is returned',
+    type: ProfileDto,
+  })
+  getProfile(@User() user: JwtPayload): ProfileDto {
+    return user;
   }
 }

@@ -1,5 +1,7 @@
 import { createCollectionDto } from '@/dtos/collection.dto';
 import { CreateUserDto, UserResponseDto } from '@/dtos/users.dto';
+import { AdminGuard } from '@/guards/admin.guard';
+import { AuthGuard } from '@/guards/auth.guard';
 import { UsersService } from '@/services/users/users.service';
 import { Mapper } from '@/utils/mapper/mapper';
 import {
@@ -9,11 +11,20 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
-@ApiTags('users')
 @Controller('users')
+@UseGuards(AuthGuard, AdminGuard)
+@ApiBearerAuth()
+@ApiTags('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 

@@ -21,8 +21,8 @@ export class UsersService {
 
   getByUsername(username: string, withPassword = false): Promise<User | null> {
     const select: FindOneOptions<User>['select'] = withPassword
-      ? ['id', 'username', 'password']
-      : ['id', 'username'];
+      ? ['id', 'username', 'email', 'role', 'password']
+      : ['id', 'username', 'email', 'role'];
 
     return this.usersRepository.findOne({
       where: { username },

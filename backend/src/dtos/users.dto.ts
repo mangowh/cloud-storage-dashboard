@@ -1,3 +1,4 @@
+import { JwtPayload } from '@/guards/auth.guard';
 import { Expose } from 'class-transformer';
 import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 
@@ -51,4 +52,19 @@ export class UserResponseDto {
   createdAt: Date;
   @Expose()
   updatedAt: Date;
+}
+
+export class ProfileDto implements JwtPayload {
+  @Expose()
+  sub: string;
+  @Expose()
+  iat: number;
+  @Expose()
+  exp: number;
+  @Expose()
+  username?: string;
+  @Expose()
+  email?: string;
+  @Expose()
+  role?: string;
 }

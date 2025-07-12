@@ -1,5 +1,6 @@
 import { createCollectionDto } from '@/dtos/collection.dto';
 import { GetObjectDto, ObjectDto } from '@/dtos/object.dto';
+import { AuthGuard } from '@/guards/auth.guard';
 import { S3Service } from '@/services/s3/s3.service';
 import { Mapper } from '@/utils/mapper/mapper';
 import {
@@ -11,16 +12,19 @@ import {
   ParseFilePipe,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('s3')
 export class S3Controller {
   constructor(private readonly s3Service: S3Service) {}
@@ -54,6 +58,7 @@ export class S3Controller {
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Upload a single file' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({

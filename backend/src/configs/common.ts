@@ -20,6 +20,13 @@ function getCommonConfig() {
         process.env.DATABASE_URL ??
         'postgresql://postgres:password@localhost:5432/bonusx_db',
     },
+
+    jwt: {
+      secret:
+        process.env.JWT_SECRET ??
+        'magical-long-secret-key-123456-7890-abcdef-ghijklmnop',
+      expiresIn: process.env.JWT_EXPIRES_IN ?? '1h',
+    },
   };
 }
 

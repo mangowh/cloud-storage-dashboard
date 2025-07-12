@@ -16,10 +16,15 @@ import { UsersService } from './services/users/users.service';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [getCommonConfig] }),
-    JwtModule.register({
-      global: true,
-      secret: 'secretkey', // TODO
-      signOptions: { expiresIn: '60s' },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get('jwt.secret'),
+        signOptions: {
+          expiresIn: configService.get('jwt.expiresIn'),
+        },
+      }),
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
