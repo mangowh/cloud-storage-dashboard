@@ -1,5 +1,5 @@
 import { createCollectionDto } from '@/dtos/collection.dto';
-import { GetObjectDto, ObjectDto, ObjectUrlDto } from '@/dtos/object.dto';
+import { GetObjectDto, ObjectDto } from '@/dtos/object.dto';
 import { S3Service } from '@/services/s3/s3.service';
 import { Mapper } from '@/utils/mapper/mapper';
 import {
@@ -69,7 +69,7 @@ export class S3Controller {
   @ApiResponse({
     status: 201,
     description: 'File uploaded successfully',
-    type: ObjectUrlDto,
+    type: ObjectDto,
   })
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
@@ -80,9 +80,9 @@ export class S3Controller {
     )
     file: Express.Multer.File,
   ) {
-    const { url } = await this.s3Service.uploadFile(file);
+    const obj = await this.s3Service.uploadFile(file);
 
-    const dto = Mapper.mapData(ObjectUrlDto, { url });
+    const dto = Mapper.mapData(ObjectDto, obj);
 
     return dto;
   }

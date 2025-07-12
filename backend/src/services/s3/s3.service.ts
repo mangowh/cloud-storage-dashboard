@@ -96,6 +96,15 @@ export class S3Service {
 
     try {
       await this.s3.send(command);
+
+      const { url } = await this.getObjectSignedUrl(key);
+
+      return new ObjectEntity({
+        key: key,
+        // size: obj.Size,
+        // lastModified: obj.LastModified,
+        url,
+      });
     } catch (error) {
       throw new InternalServerErrorException(
         {
@@ -107,8 +116,6 @@ export class S3Service {
         },
       );
     }
-
-    return this.getObjectSignedUrl(key);
   }
 
   async getObjectSignedUrl(key: string) {
