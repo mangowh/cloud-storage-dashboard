@@ -22,74 +22,66 @@ import {
   ApiConsumes,
   ApiOperation,
   ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
 
+@ApiTags('s3')
 @ApiBearerAuth()
 @Controller('s3')
 export class S3Controller {
   constructor(private readonly s3Service: S3Service) {}
 
   @Get()
+  @ApiOperation({ summary: 'List all files in the bucket' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'List of files in the bucket',
     type: createCollectionDto(ObjectDto),
+    description: 'List of files',
   })
   async getObjects() {
     const objs = await this.s3Service.getObjects();
-
-    const dtos = objs.map((obj) => Mapper.mapData(ObjectDto, obj));
-
-    return dtos;
+    return objs.map((obj) => Mapper.mapData(ObjectDto, obj));
   }
 
   @Get(':key')
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'File details',
-    type: ObjectDto,
-  })
+  @ApiOperation({ summary: 'Get details of a file by key' })
+  @ApiResponse({ status: HttpStatus.OK, type: ObjectDto })
   async getObject(@Param() { key }: GetObjectDto) {
     const obj = await this.s3Service.getObject(key);
-
-    const dto = Mapper.mapData(ObjectDto, obj);
-
-    return dto;
+    return Mapper.mapData(ObjectDto, obj);
   }
 
   @Post()
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Upload a single file' })
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: 'Upload a file' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
+        file: { type: 'string', format: 'binary' },
       },
     },
   })
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'File uploaded successfully',
     type: ObjectDto,
+    description: 'File uploaded successfully',
   })
-  @UseInterceptors(FileInterceptor('file'))
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid or missing file',
+  })
   async uploadFile(
     @UploadedFile(
       new ParseFilePipe({
-        validators: [new MaxFileSizeValidator({ maxSize: 100 * 1024 * 1024 })], // 100 MB
+        validators: [new MaxFileSizeValidator({ maxSize: 100 * 1024 * 1024 })],
       }),
     )
     file: Express.Multer.File,
   ) {
     const obj = await this.s3Service.uploadFile(file);
-
-    const dto = Mapper.mapData(ObjectDto, obj);
-
-    return dto;
+    return Mapper.mapData(ObjectDto, obj);
   }
 }

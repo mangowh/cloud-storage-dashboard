@@ -14,28 +14,39 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @HttpCode(HttpStatus.OK)
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Log in a user' })
-  @ApiBody({ type: SignInDto, description: 'User credentials for login' })
+  @ApiBody({ type: SignInDto })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'User successfully logged in',
     type: LoginResponseDto,
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid credentials or authentication failed',
+    description: 'User successfully logged in',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Validation failed (e.g., missing username/password)',
+    description: 'Missing or invalid credentials',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid credentials',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Server error during login',
   })
   async signIn(@Body() signInDto: SignInDto) {
     try {
@@ -57,10 +68,12 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('profile')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'User is logged in and profile is returned',
     type: ProfileDto,
+    description: 'Current user profile',
   })
   getProfile(@User() user: JwtPayload): ProfileDto {
     return user;

@@ -21,55 +21,49 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 
-@Controller('users')
-@UseGuards(AuthGuard, AdminGuard)
-@ApiBearerAuth()
 @ApiTags('users')
+@ApiBearerAuth()
+@UseGuards(AuthGuard, AdminGuard)
+@Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new user' })
-  @ApiBody({ type: CreateUserDto, description: 'User data for creation' })
+  @ApiBody({ type: CreateUserDto })
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'The user has been successfully created.',
     type: UserResponseDto,
+    description: 'User created successfully',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Validation failed or email already exists.',
+    description: 'Validation error or duplicate email',
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: 'An unexpected error occurred.',
+    description: 'Unexpected error',
   })
   async create(@Body() newUser: CreateUserDto) {
     const user = await this.userService.create(newUser);
-
-    const dto = Mapper.mapData(UserResponseDto, user);
-
-    return dto;
+    return Mapper.mapData(UserResponseDto, user);
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get a list of all users' })
+  @ApiOperation({ summary: 'List all users' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Successfully retrieved list of users.',
     type: createCollectionDto(UserResponseDto),
+    description: 'List of users',
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: 'An unexpected error occurred.',
+    description: 'Unexpected error',
   })
   async list(): Promise<UserResponseDto[]> {
     const users = await this.userService.list();
-
-    const dtos = users.map((obj) => Mapper.mapData(UserResponseDto, obj));
-
-    return dtos;
+    return users.map((obj) => Mapper.mapData(UserResponseDto, obj));
   }
 }
