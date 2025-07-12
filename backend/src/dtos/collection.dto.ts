@@ -2,16 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { IsArray, ValidateNested } from 'class-validator';
 
-export interface ICollection<T> {
-  items: T[];
-}
-
 export function createCollectionDto<TItem>(ItemDto: new () => TItem) {
-  class CollectionDto implements ICollection<TItem> {
+  class CollectionDto {
+    @ApiProperty({ type: ItemDto, isArray: true })
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => ItemDto)
-    @ApiProperty({ type: ItemDto, isArray: true })
     @Expose()
     items: TItem[];
 

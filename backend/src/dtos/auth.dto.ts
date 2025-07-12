@@ -1,27 +1,29 @@
-import { IsNotEmpty, IsString } from 'class-validator';
-import { IUserResponseDto, UserResponseDto } from './users.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNotEmpty } from 'class-validator';
+import { UserResponseDto } from './users.dto';
 
-export class ISignInDto {
+export class SignInDto {
+  @ApiProperty({ example: 'johndoe', description: 'Your unique username' })
+  @IsString()
+  @IsNotEmpty()
   username: string;
+
+  @ApiProperty({ example: 'P@ssw0rd!', description: 'Your account password' })
+  @IsString()
+  @IsNotEmpty()
   password: string;
 }
 
-export class SignInDto implements ISignInDto {
-  @IsString({ message: 'Username must be a string' })
-  @IsNotEmpty({ message: 'Username cannot be empty' })
-  username: string;
-
-  @IsString({ message: 'Password must be a string' })
-  @IsNotEmpty({ message: 'Password cannot be empty' })
-  password: string;
-}
-
-export interface ILoginSuccessResponse {
-  user: IUserResponseDto;
-  accessToken: string;
-}
-
-export class LoginResponseDto implements ILoginSuccessResponse {
+export class LoginResponseDto {
+  @ApiProperty({
+    type: UserResponseDto,
+    description: 'Authenticated user data',
+  })
   user: UserResponseDto;
+
+  @ApiProperty({
+    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...signature',
+    description: 'JWT access token',
+  })
   accessToken: string;
 }
