@@ -5,6 +5,7 @@ import { Mapper } from '@/utils/mapper/mapper';
 import {
   Controller,
   Get,
+  HttpStatus,
   MaxFileSizeValidator,
   Param,
   ParseFilePipe,
@@ -22,11 +23,11 @@ import {
 
 @Controller('s3')
 export class S3Controller {
-  constructor(private s3Service: S3Service) {}
+  constructor(private readonly s3Service: S3Service) {}
 
   @Get()
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'List of files in the bucket',
     type: createCollectionDto(ObjectDto),
   })
@@ -40,7 +41,7 @@ export class S3Controller {
 
   @Get(':key')
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'File details',
     type: ObjectDto,
   })
@@ -67,7 +68,7 @@ export class S3Controller {
     },
   })
   @ApiResponse({
-    status: 201,
+    status: HttpStatus.CREATED,
     description: 'File uploaded successfully',
     type: ObjectDto,
   })

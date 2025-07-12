@@ -1,17 +1,22 @@
+import { hash } from 'bcrypt';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
+  BeforeInsert,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
   Unique,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('users')
-@Unique(['email'])
+@Unique(['username'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ length: 50 })
+  username: string;
 
   @Column({ length: 100 })
   name: string;
@@ -19,10 +24,10 @@ export class User {
   @Column({ length: 150 })
   email: string;
 
-  @Column({ select: false }) // Don't expose password by default
+  @Column({ select: false })
   password: string;
 
-  @Column({ default: 'user' }) // roles: 'user', 'admin', etc.
+  @Column({ default: 'user' })
   role: string;
 
   @CreateDateColumn()
@@ -30,4 +35,15 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  constructor(user: Partial<User> = {}) {
+    Object.assign(this, user);
+  }
+
+  @BeforeInsert()
+  async hashPassword() {
+    if (this.password) {
+      this.password = await hash(this.password, 10);
+    }
+  }
 }

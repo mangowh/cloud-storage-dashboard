@@ -2,6 +2,7 @@ import getCommonConfig from '@/configs/common';
 import { ObjectEntity } from '@/entities/object.entity';
 import {
   GetObjectCommand,
+  HeadObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
   S3,
@@ -69,16 +70,18 @@ export class S3Service {
   }
 
   async getObject(key: string) {
-    const obj = await this.s3.getObject({
-      Bucket: this.bucketName,
-      Key: key,
-    });
+    const obj = await this.s3.send(
+      new HeadObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+      }),
+    );
 
     const { url } = await this.getObjectSignedUrl(key);
 
     return new ObjectEntity({
       key: key,
-      // size: obj.Size,
+      size: obj.ContentLength,
       lastModified: obj.LastModified,
       url,
     });
@@ -97,14 +100,9 @@ export class S3Service {
     try {
       await this.s3.send(command);
 
-      const { url } = await this.getObjectSignedUrl(key);
+      const obj = await this.getObject(key);
 
-      return new ObjectEntity({
-        key: key,
-        // size: obj.Size,
-        // lastModified: obj.LastModified,
-        url,
-      });
+      return obj;
     } catch (error) {
       throw new InternalServerErrorException(
         {
