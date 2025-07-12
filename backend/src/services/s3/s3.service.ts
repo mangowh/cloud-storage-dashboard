@@ -1,5 +1,11 @@
 import getCommonConfig from '@/configs/common';
-import { GetObjectCommand, PutObjectCommand, S3 } from '@aws-sdk/client-s3';
+import { ObjectEntity } from '@/entities/object.entity';
+import {
+  GetObjectCommand,
+  ListObjectsV2Command,
+  PutObjectCommand,
+  S3,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import {
   HttpStatus,
@@ -34,9 +40,47 @@ export class S3Service {
     });
   }
 
-  async getFiles() {
-    return this.s3.listObjects({
+  async getObjects() {
+    const result = await this.s3.send(
+      new ListObjectsV2Command({
+        Bucket: this.bucketName,
+      }),
+    );
+
+    const objects = result.Contents || [];
+
+    return Promise.all(
+      objects.map(async (obj) => {
+        let url: string | undefined;
+
+        if (obj.Key) {
+          const fileUrlData = await this.getObjectSignedUrl(obj.Key);
+          url = fileUrlData.url;
+        }
+
+        return new ObjectEntity({
+          key: obj.Key,
+          size: obj.Size,
+          lastModified: obj.LastModified,
+          url,
+        });
+      }),
+    );
+  }
+
+  async getObject(key: string) {
+    const obj = await this.s3.getObject({
       Bucket: this.bucketName,
+      Key: key,
+    });
+
+    const { url } = await this.getObjectSignedUrl(key);
+
+    return new ObjectEntity({
+      key: key,
+      // size: obj.Size,
+      lastModified: obj.LastModified,
+      url,
     });
   }
 
@@ -64,12 +108,12 @@ export class S3Service {
       );
     }
 
-    return this.getFileUrl(key);
+    return this.getObjectSignedUrl(key);
   }
 
-  async getFileUrl(key: string) {
+  async getObjectSignedUrl(key: string) {
     try {
-      const downloadUrl = await getSignedUrl(
+      const url = await getSignedUrl(
         this.s3,
         new GetObjectCommand({
           Bucket: this.bucketName,
@@ -78,7 +122,7 @@ export class S3Service {
         { expiresIn: 3600 }, // 1 hour
       );
 
-      return { downloadUrl };
+      return { url };
     } catch (error) {
       throw new InternalServerErrorException(
         {

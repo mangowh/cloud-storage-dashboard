@@ -1,8 +1,12 @@
+import { createCollectionDto } from '@/dtos/collection.dto';
+import { GetObjectDto, ObjectDto, ObjectUrlDto } from '@/dtos/object.dto';
 import { S3Service } from '@/services/s3/s3.service';
+import { Mapper } from '@/utils/mapper/mapper';
 import {
   Controller,
   Get,
   MaxFileSizeValidator,
+  Param,
   ParseFilePipe,
   Post,
   UploadedFile,
@@ -10,10 +14,10 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
-  ApiResponse,
-  ApiOperation,
-  ApiConsumes,
   ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
 } from '@nestjs/swagger';
 
 @Controller('s3')
@@ -24,10 +28,28 @@ export class S3Controller {
   @ApiResponse({
     status: 200,
     description: 'List of files in the bucket',
-    // type: FileEntity,
+    type: createCollectionDto(ObjectDto),
   })
-  getFiles() {
-    return this.s3Service.getFiles();
+  async getObjects() {
+    const objs = await this.s3Service.getObjects();
+
+    const dtos = objs.map((obj) => Mapper.mapData(ObjectDto, obj));
+
+    return dtos;
+  }
+
+  @Get(':key')
+  @ApiResponse({
+    status: 200,
+    description: 'File details',
+    type: ObjectDto,
+  })
+  async getObject(@Param() { key }: GetObjectDto) {
+    const obj = await this.s3Service.getObject(key);
+
+    const dto = Mapper.mapData(ObjectDto, obj);
+
+    return dto;
   }
 
   @Post()
@@ -47,10 +69,10 @@ export class S3Controller {
   @ApiResponse({
     status: 201,
     description: 'File uploaded successfully',
-    // type: FileEntity, // TODO aggiustare tipo
+    type: ObjectUrlDto,
   })
   @UseInterceptors(FileInterceptor('file'))
-  uploadFile(
+  async uploadFile(
     @UploadedFile(
       new ParseFilePipe({
         validators: [new MaxFileSizeValidator({ maxSize: 100 * 1024 * 1024 })], // 100 MB
@@ -58,6 +80,10 @@ export class S3Controller {
     )
     file: Express.Multer.File,
   ) {
-    return this.s3Service.uploadFile(file); // TODO use file DTO
+    const { url } = await this.s3Service.uploadFile(file);
+
+    const dto = Mapper.mapData(ObjectUrlDto, { url });
+
+    return dto;
   }
 }
