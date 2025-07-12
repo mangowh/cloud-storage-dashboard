@@ -20,7 +20,7 @@ async function bootstrap() {
   });
 
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('port') as number;
+  const port = configService.get<number>('port') ?? 3000;
 
   const config = new DocumentBuilder()
     .setTitle('File Uploader API')

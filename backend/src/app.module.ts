@@ -12,6 +12,7 @@ import { AppService } from './services/app/app.service';
 import { AuthService } from './services/auth/auth.service';
 import { S3Service } from './services/s3/s3.service';
 import { UsersService } from './services/users/users.service';
+import { UsersMigrations } from './migrations/1752353613628-UsersMigration';
 
 @Module({
   imports: [
@@ -35,8 +36,10 @@ import { UsersService } from './services/users/users.service';
           url: configService.get('db.url'),
 
           synchronize: configService.get('isDev'),
+          migrationsRun: !configService.get('isDev'),
 
           entities: [User],
+          migrations: [UsersMigrations],
         };
       },
     }),

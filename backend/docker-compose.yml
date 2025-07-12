@@ -7,10 +7,11 @@ services:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://postgres:password@database.local:5432/bonusx_db
       - S3_ENDPOINT=http://storage.local:9000
-      - S3_ACCESS_KEY_ID=NINJA_ACCESS_KEY
-      - S3_SECRET_ACCESS_KEY=NINJA_SECRET_KEY
       - S3_BUCKET_NAME=bonusx-bucket
+      - AWS_REGION=eu-west-1
       - PORT=80
+    env_file:
+      - .env
     ports:
       - '8080:80'
     depends_on:
@@ -18,6 +19,7 @@ services:
       - s3ninja
     networks:
       - bonusx-network
+    restart: unless-stopped
 
   postgres:
     hostname: database.local
@@ -34,6 +36,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - bonusx-network
+    restart: unless-stopped
 
   s3ninja:
     hostname: storage.local
@@ -46,6 +49,7 @@ services:
       - s3ninja_data:/home/sirius/data
     networks:
       - bonusx-network
+    restart: unless-stopped
 
 volumes:
   postgres_data:

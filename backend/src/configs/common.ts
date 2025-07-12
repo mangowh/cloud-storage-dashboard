@@ -2,7 +2,7 @@ function getCommonConfig() {
   return {
     isDev: process.env.NODE_ENV !== 'production',
 
-    port: parseInt(process.env.APP_PORT ?? '3000', 10),
+    port: parseInt(process.env.PORT ?? '3000', 10),
 
     s3ClientConfig: {
       endpoint: process.env.S3_ENDPOINT ?? 'http://localhost:9000',
