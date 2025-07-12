@@ -6,7 +6,7 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://postgres:password@database.local:5432/bonusx_db
-      - S3_ENDPOINT=http://storage.local:9000
+      - S3_ENDPOINT=http://host.docker.internal:9000 # to be reachable from the host machine
       - S3_BUCKET_NAME=bonusx-bucket
       - AWS_REGION=eu-west-1
       - PORT=80
