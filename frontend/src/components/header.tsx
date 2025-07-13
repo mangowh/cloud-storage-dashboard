@@ -9,11 +9,9 @@ import {
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../contexts/auth.context";
-import { useFileUpload } from "../contexts/file-upload.context";
 
 export const Header = () => {
   const auth = useAuth();
-  const fileUpload = useFileUpload();
 
   const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
   const [username, setUsername] = useState("");
@@ -46,7 +44,6 @@ export const Header = () => {
           <Typography variant="h6" sx={{ flexGrow: "1" }}>
             Cloud Storage Dashboard
           </Typography>
-          {JSON.stringify(fileUpload.files)}
 
           {auth.user ? (
             <>
