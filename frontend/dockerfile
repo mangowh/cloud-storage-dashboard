@@ -1,0 +1,20 @@
+FROM public.ecr.aws/docker/library/node:22.16.0-bullseye AS origin
+
+FROM origin AS builder
+
+ARG PUBLIC_API_URL
+ENV PUBLIC_API_URL=${PUBLIC_API_URL}
+
+WORKDIR /app
+
+COPY . .
+
+RUN yarn workspaces focus frontend
+RUN yarn workspaces foreach -Rpt --from frontend run build
+
+FROM caddy:alpine AS runner
+
+COPY --from=builder /app/frontend/Caddyfile /etc/caddy/Caddyfile
+COPY --from=builder /app/frontend/dist /var/www
+
+EXPOSE 80

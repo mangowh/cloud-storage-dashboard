@@ -6045,14 +6045,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bx-dev-interview-challenge@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "bx-dev-interview-challenge@workspace:."
-  dependencies:
-    husky: "npm:^9.1.7"
-  languageName: unknown
-  linkType: soft
-
 "bytes@npm:3.1.2, bytes@npm:^3.1.2":
   version: 3.1.2
   resolution: "bytes@npm:3.1.2"
@@ -6344,6 +6336,14 @@ __metadata:
   checksum: 10c0/2176952b3649293473999a95d7bebfc9dc96410f6cbd3d2595cf12fd401f63a4bf41a7adbfd3ab2ff09ed60cb9870c58c6acdd18b87767366fabfc163700f13b
   languageName: node
   linkType: hard
+
+"cloud-storage-dashboard@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "cloud-storage-dashboard@workspace:."
+  dependencies:
+    husky: "npm:^9.1.7"
+  languageName: unknown
+  linkType: soft
 
 "clsx@npm:^2.1.1":
   version: 2.1.1
