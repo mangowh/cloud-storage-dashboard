@@ -32,7 +32,10 @@ export class S3Controller {
   constructor(private readonly s3Service: S3Service) {}
 
   @Get()
-  @ApiOperation({ summary: 'List all files in the bucket' })
+  @ApiOperation({
+    summary: 'List all files in the bucket',
+    operationId: 'getObjects',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     type: createCollectionDto(ObjectDto),
@@ -47,7 +50,10 @@ export class S3Controller {
   }
 
   @Get(':key')
-  @ApiOperation({ summary: 'Get details of a file by key' })
+  @ApiOperation({
+    summary: 'Get details of a file by key',
+    operationId: 'getObject',
+  })
   @ApiResponse({ status: HttpStatus.OK, type: ObjectDto })
   async getObject(@Param() { key }: GetObjectDto) {
     const obj = await this.s3Service.getObject(key);
@@ -57,7 +63,10 @@ export class S3Controller {
   @Post()
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('file'))
-  @ApiOperation({ summary: 'Upload a file' })
+  @ApiOperation({
+    summary: 'Upload a file',
+    operationId: 'uploadFile',
+  })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {

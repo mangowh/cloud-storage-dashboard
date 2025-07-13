@@ -29,7 +29,10 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Log in a user' })
+  @ApiOperation({
+    summary: 'Log in a user',
+    operationId: 'signIn',
+  })
   @ApiBody({ type: SignInDto })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -69,7 +72,10 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get('profile')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiOperation({
+    summary: 'Get current user profile',
+    operationId: 'getProfile',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     type: ProfileDto,

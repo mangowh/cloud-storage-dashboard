@@ -13,6 +13,7 @@ export class AppController {
   @ApiOperation({
     summary: 'Get a hello message',
     description: `Returns a greeting message. It’s like saying "I'm Pickle Rick!" but... less green.`,
+    operationId: 'getHelloMessage',
   })
   @ApiResponse({
     status: 200,

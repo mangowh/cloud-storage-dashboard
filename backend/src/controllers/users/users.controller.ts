@@ -30,7 +30,10 @@ export class UsersController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create a new user' })
+  @ApiOperation({
+    summary: 'Create a new user',
+    operationId: 'create',
+  })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -52,7 +55,10 @@ export class UsersController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'List all users' })
+  @ApiOperation({
+    summary: 'List all users',
+    operationId: 'list',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     type: createCollectionDto(UserResponseDto),
