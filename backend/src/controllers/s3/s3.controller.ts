@@ -40,7 +40,10 @@ export class S3Controller {
   })
   async getObjects() {
     const objs = await this.s3Service.getObjects();
-    return objs.map((obj) => Mapper.mapData(ObjectDto, obj));
+    const mappedObjs = objs.map((obj) => Mapper.mapData(ObjectDto, obj));
+
+    const CollectionDto = createCollectionDto(ObjectDto);
+    return new CollectionDto(mappedObjs);
   }
 
   @Get(':key')
