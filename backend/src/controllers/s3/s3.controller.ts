@@ -43,10 +43,16 @@ export class S3Controller {
   })
   async getObjects() {
     const objs = await this.s3Service.getObjects();
+
     const mappedObjs = objs.map((obj) => Mapper.mapData(ObjectDto, obj));
 
+    // order by lastModified DESC
+    const sortedObjs = mappedObjs.sort(
+      (a, b) => b.lastModified.getTime() - a.lastModified.getTime(),
+    );
+
     const CollectionDto = createCollectionDto(ObjectDto);
-    return new CollectionDto(mappedObjs);
+    return new CollectionDto(sortedObjs);
   }
 
   @Get(':key')
