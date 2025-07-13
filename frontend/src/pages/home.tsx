@@ -11,10 +11,9 @@ import {
 import { useEffect, useState } from "react";
 import FileUploader from "../components/file-uploader";
 import { Header } from "../components/header";
-import {
-  useFileUpload
-} from "../contexts/file-upload.context";
+import { useFileUpload } from "../contexts/file-upload.context";
 import { apiService } from "../services/api.service";
+import { downloadFile } from "../utils/download-file";
 
 export const Home = () => {
   const { files } = useFileUpload();
@@ -97,21 +96,43 @@ export const Home = () => {
         }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
       >
         <Box
           sx={{
             bgcolor: "white",
             p: 4,
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
             width: 400,
-            textWrap: "break-word",
-            wordBreak: "break-all",
           }}
         >
-          {JSON.stringify(uploadedFile)}
+          {uploadedFile ? (
+            <>
+              <Typography variant="body1" gutterBottom>
+                File uploaded successfully:
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Name:</strong> {uploadedFile.key}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Size:</strong> {uploadedFile.size ?? 0} bytes
+              </Typography>
+
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => downloadFile(uploadedFile.url)}
+                sx={{ mt: 2 }}
+              >
+                Download File
+              </Button>
+            </>
+          ) : (
+            <Typography variant="body2">No file uploaded</Typography>
+          )}
         </Box>
       </Modal>
     </>

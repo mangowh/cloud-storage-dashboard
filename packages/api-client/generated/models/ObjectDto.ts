@@ -30,19 +30,19 @@ export interface ObjectDto {
      * @type {number}
      * @memberof ObjectDto
      */
-    size?: number;
+    size: number;
     /**
      * Last modification timestamp
      * @type {Date}
      * @memberof ObjectDto
      */
-    lastModified?: Date;
+    lastModified: Date;
     /**
      * Signed or public URL
      * @type {string}
      * @memberof ObjectDto
      */
-    url?: string;
+    url: string;
 }
 
 /**
@@ -50,6 +50,9 @@ export interface ObjectDto {
  */
 export function instanceOfObjectDto(value: object): value is ObjectDto {
     if (!('key' in value) || value['key'] === undefined) return false;
+    if (!('size' in value) || value['size'] === undefined) return false;
+    if (!('lastModified' in value) || value['lastModified'] === undefined) return false;
+    if (!('url' in value) || value['url'] === undefined) return false;
     return true;
 }
 
@@ -64,9 +67,9 @@ export function ObjectDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean):
     return {
         
         'key': json['key'],
-        'size': json['size'] == null ? undefined : json['size'],
-        'lastModified': json['lastModified'] == null ? undefined : (new Date(json['lastModified'])),
-        'url': json['url'] == null ? undefined : json['url'],
+        'size': json['size'],
+        'lastModified': (new Date(json['lastModified'])),
+        'url': json['url'],
     };
 }
 
@@ -83,7 +86,7 @@ export function ObjectDtoToJSONTyped(value?: ObjectDto | null, ignoreDiscriminat
         
         'key': value['key'],
         'size': value['size'],
-        'lastModified': value['lastModified'] == null ? undefined : ((value['lastModified']).toISOString()),
+        'lastModified': ((value['lastModified']).toISOString()),
         'url': value['url'],
     };
 }
