@@ -1,20 +1,21 @@
 FROM public.ecr.aws/docker/library/node:22.16.0-bullseye AS origin
 
 FROM origin AS builder
+
 WORKDIR /app
+
 COPY . .
 
-RUN yarn install
-RUN yarn build
+RUN yarn workspaces focus backend
+RUN yarn workspace backend build
 
 FROM origin AS runner
 
 WORKDIR /app
 
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/backend/dist .
 
-COPY --from=builder /app/dist .
-
-EXPOSE 80
+EXPOSE 8080
 
 CMD [ "node", "main.js" ]
