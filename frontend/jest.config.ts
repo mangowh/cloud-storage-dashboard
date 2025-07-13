@@ -200,6 +200,8 @@ const config: Config = {
 
   // Whether to use watchman for file crawling
   // watchman: true,
+
+  passWithNoTests: true
 };
 
 export default config;
