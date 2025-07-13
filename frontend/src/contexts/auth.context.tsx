@@ -13,7 +13,7 @@ type AuthContextType = {
   accessToken: string | null;
 
   login: (username: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: { children?: ReactNode }) => {
     setAccessToken(data.accessToken);
   };
 
-  const logout = () => {
+  const logout = async () => {
     setUser(null);
     setAccessToken(null);
   };

@@ -1,17 +1,23 @@
+import CloseIcon from "@mui/icons-material/Close";
 import {
   AppBar,
-  Box,
   Button,
-  Modal,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
   TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
+import { useNotifications } from "@toolpad/core";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../contexts/auth.context";
 
 export const Header = () => {
   const auth = useAuth();
+  const notifications = useNotifications();
 
   const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
   const [username, setUsername] = useState("");
@@ -32,23 +38,56 @@ export const Header = () => {
       setPassword("");
 
       setLoginModalIsOpen(false);
+
+      notifications.show("Login success", {
+        severity: "success",
+        autoHideDuration: 3000,
+      });
     } catch (err) {
       console.error(err);
+
+      notifications.show("Login error. Check credentials", {
+        severity: "error",
+        autoHideDuration: 5000,
+      });
     }
   };
 
   return (
     <>
       <AppBar position="static">
-        <Toolbar>
+        <Toolbar
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-around",
+          }}
+        >
           <Typography variant="h6" sx={{ flexGrow: "1" }}>
             Cloud Storage Dashboard
           </Typography>
 
           {auth.user ? (
             <>
-              ciao {auth.user.name}
-              <Button color="inherit" onClick={() => auth.logout()}>
+              <Button
+                color="inherit"
+                onClick={async () => {
+                  try {
+                    await auth.logout();
+
+                    notifications.show("Correctly logged out", {
+                      autoHideDuration: 3000,
+                    });
+                  } catch (err) {
+                    console.error(err);
+
+                    notifications.show("Logout error. Try again", {
+                      severity: "error",
+                      autoHideDuration: 5000,
+                    });
+                  }
+                }}
+              >
                 Logout
               </Button>
             </>
@@ -60,38 +99,38 @@ export const Header = () => {
         </Toolbar>
       </AppBar>
 
-      <Modal
+      <Dialog
         open={loginModalIsOpen}
-        onClose={() => setLoginModalIsOpen(false)}
-        aria-labelledby="login-dialog-title"
-        aria-describedby="login-dialog-description"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+        onClose={() => {
+          setTimeout(() => {
+            setUsername("");
+            setPassword("");
+          }, 100);
         }}
+        component="form"
+        onSubmit={handleSubmit}
       >
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="login-dialog-title"
-          aria-describedby="login-dialog-description"
+        <DialogTitle>Login</DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={() => setLoginModalIsOpen(false)}
+          sx={(theme) => ({
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: theme.palette.grey[500],
+          })}
+        >
+          <CloseIcon />
+        </IconButton>
+
+        <DialogContent
           sx={{
-            width: 360,
-            bgcolor: "background.paper",
-            borderRadius: 2,
-            boxShadow: 24,
-            p: 4,
             display: "flex",
             flexDirection: "column",
             gap: 2,
           }}
         >
-          <Typography id="login-dialog-title" variant="h6">
-            Login
-          </Typography>
           <Typography id="login-dialog-description" variant="body2">
             Enter your username and password to sign in.
           </Typography>
@@ -113,14 +152,14 @@ export const Header = () => {
             fullWidth
             autoComplete="current-password"
           />
-          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-            <Button onClick={() => setLoginModalIsOpen(false)}>Cancel</Button>
-            <Button type="submit" variant="contained">
-              Submit
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
+        </DialogContent>
+
+        <DialogActions>
+          <Button type="submit" variant="contained">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

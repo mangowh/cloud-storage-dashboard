@@ -1,9 +1,11 @@
+import CloseIcon from "@mui/icons-material/Close";
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
+  DialogContent,
   DialogTitle,
+  IconButton,
   TextField,
 } from "@mui/material";
 import { useState } from "react";
@@ -22,29 +24,43 @@ export const UploadFormModal = ({
   onCancel,
 }: UploadFormModalProps) => {
   const [fileName, setFileName] = useState(file?.name ?? "");
+  const [loading, setLoading] = useState(false);
 
   const handleConfirm = () => {
+    setLoading(true);
     onSubmit(fileName);
   };
 
   return (
     <Dialog open={open} maxWidth="sm" fullWidth>
-      <DialogTitle>Upload File</DialogTitle>
+      <DialogTitle>Choose a file name</DialogTitle>
+      <IconButton
+        aria-label="close"
+        onClick={onCancel}
+        sx={(theme) => ({
+          position: "absolute",
+          right: 8,
+          top: 8,
+          color: theme.palette.grey[500],
+        })}
+      >
+        <CloseIcon />
+      </IconButton>
 
-      <Box sx={{ p: 2 }}>
+      <DialogContent dividers>
         <TextField
           value={fileName}
           onChange={(e) => setFileName(e.target.value)}
           label="File name"
           variant="standard"
         />
-      </Box>
+      </DialogContent>
 
       <DialogActions>
-        <Button onClick={onCancel}>Cancel</Button>
         <Button
           onClick={handleConfirm}
-          disabled={fileName.length === 0}
+          loading={loading}
+          disabled={loading || fileName.length === 0}
           variant="contained"
         >
           Upload
