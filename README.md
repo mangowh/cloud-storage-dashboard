@@ -12,6 +12,12 @@ Use these credentials to login: `user:user`
 
 ## Run development version
 
+Install dependencies
+
+```bash
+yarn
+```
+
 ### Services
 
 ```bash
