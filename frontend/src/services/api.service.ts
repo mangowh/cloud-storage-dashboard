@@ -10,7 +10,7 @@ class ApiService {
   public auth!: AuthApi;
 
   private config: ConfigurationParameters = {
-    basePath: "http://localhost:3000",
+    basePath: import.meta.env.PUBLIC_API_URL ?? "http://localhost:3000",
   };
 
   constructor() {
