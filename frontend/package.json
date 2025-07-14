@@ -10,8 +10,7 @@
     "test": "jest --coverage=false",
     "lint": "eslint ./src --ext .ts,.tsx --fix",
     "pre-commit": "yarn lint",
-    "pre-push": "yarn test",
-    "generate:api-client": "openapi-generator-cli generate -i http://host.docker.internal:3000/swagger/json -g typescript-fetch -o ./src/api-client --additional-properties=useSingleRequestParameter=true"
+    "pre-push": "yarn test"
   },
   "dependencies": {
     "@bonusx/cloud-storage-dashboard-api-client": "workspace:*",
