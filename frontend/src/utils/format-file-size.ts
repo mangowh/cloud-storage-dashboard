@@ -1,4 +1,4 @@
-export const formatFileSize = (size: number): string => {
+export const formatFileSize = (size: number, decimals = 2): string => {
   if (size < 1024) return `${size} B`;
 
   const units = ["KB", "MB", "GB", "TB"];
@@ -10,5 +10,5 @@ export const formatFileSize = (size: number): string => {
     unitIndex++;
   } while (readableSize >= 1024 && unitIndex < units.length - 1);
 
-  return `${readableSize.toFixed(2)} ${units[unitIndex]}`;
+  return `${readableSize.toFixed(decimals)} ${units[unitIndex]}`;
 };

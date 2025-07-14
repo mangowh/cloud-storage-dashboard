@@ -5,7 +5,6 @@
 ```bash
 docker compose up -d
 ```
-
 Launch http://host.docker.internal:4000
 
 Use these credentials to login: `user:user`
@@ -25,6 +24,7 @@ docker compose up -d postgres s3ninja
 ```
 
 S3Ninja UI is available at http://localhost:9000/ui
+Postgres DB is available at postgres://localhost:5432
 
 ### Backend
 
