@@ -15,6 +15,7 @@ export default defineConfig({
     meta: {
       viewport: "initial-scale=1, width=device-width",
     },
+    title: "Cloud Storage Dashboard",
   },
   server: {
     port: 3001,

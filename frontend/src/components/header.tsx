@@ -39,7 +39,7 @@ export const Header = () => {
 
       setLoginModalIsOpen(false);
 
-      notifications.show("Login success", {
+      notifications.show("Login successful", {
         severity: "success",
         autoHideDuration: 3000,
       });
@@ -75,13 +75,13 @@ export const Header = () => {
                   try {
                     await auth.logout();
 
-                    notifications.show("Correctly logged out", {
+                    notifications.show("Successfully logged out", {
                       autoHideDuration: 3000,
                     });
                   } catch (err) {
                     console.error(err);
 
-                    notifications.show("Logout error. Try again", {
+                    notifications.show("Logout error. Please try again", {
                       severity: "error",
                       autoHideDuration: 5000,
                     });

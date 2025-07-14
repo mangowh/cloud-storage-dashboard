@@ -99,7 +99,7 @@ export const Home = () => {
         setUploadedFile(uploadedFile);
         setUploadedFileInfoModalOpen(true);
 
-        notifications.show("File correctly updated", {
+        notifications.show("File correctly uploaded", {
           severity: "success",
           autoHideDuration: 3000,
         });
