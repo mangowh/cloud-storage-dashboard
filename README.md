@@ -5,7 +5,7 @@
 ```bash
 docker compose up -d
 ```
-Launch http://host.docker.internal:4000
+Launch http://localhost:4000/
 
 Use these credentials to login: `user:user`
 
