@@ -24,7 +24,29 @@ export const AuthProvider = ({ children }: { children?: ReactNode }) => {
 
   useEffect(() => {
     apiService.setToken(accessToken);
-  });
+  }, [accessToken]);
+
+  useEffect(() => {
+    const localStorageUser = localStorage.getItem("user");
+    if (localStorageUser) {
+      setUser(JSON.parse(localStorageUser));
+    }
+
+    const localStorageAccessToken = localStorage.getItem("accessToken");
+    if (localStorageAccessToken) {
+      setAccessToken(localStorageAccessToken);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+
+    if (accessToken) {
+      localStorage.setItem("accessToken", accessToken);
+    }
+  }, [user, accessToken]);
 
   const login = async (username: string, password: string) => {
     const data = await apiService.auth.signIn({
@@ -37,6 +59,9 @@ export const AuthProvider = ({ children }: { children?: ReactNode }) => {
   const logout = async () => {
     setUser(null);
     setAccessToken(null);
+
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
   };
 
   return (
